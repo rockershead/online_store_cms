@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import UploadProduct from "./pages/UploadProduct";
 import ProductList from "./pages/ProductList";
+import NewPassword from "./pages/NewPassword";
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
           </Route>
           <Route exact path="/ForgotPassword">
             <ForgotPassword />
+          </Route>
+          <Route exact path="/NewPassword">
+            <NewPassword />
           </Route>
           <Route exact path="/UploadProduct">
             <UploadProduct />

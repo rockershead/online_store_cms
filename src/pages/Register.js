@@ -1,5 +1,5 @@
 import { useHistory } from "react-router-dom";
-//import firebase from '../utils/firestore';
+
 import {
   Button,
   Typography,
@@ -53,17 +53,12 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const email = e.target[0].value;
-    const password = e.target[2].value;
-    const confirm_password = e.target[4].value;
-    const contact = e.target[6].value;
-    const age = e.target[8].value;
-
-    console.log(email);
-    console.log(password);
-    console.log(confirm_password);
-    console.log(contact);
-    console.log(age);
+    const email = e.target.email.value;
+    const name = e.target.name.value;
+    const password = e.target.password.value;
+    const confirm_password = e.target.confirm_password.value;
+    const contact = e.target.contact.value;
+    const age = e.target.age.value;
 
     if (password.length < 6) {
       alert("Password length must have 6 characters or more");
@@ -74,10 +69,9 @@ const Register = () => {
     }
 
     try {
-      setError("");
-      setLoading(true);
       axios
         .post(config.API_URL + "/auth/register", {
+          name: name,
           email: email,
           password: password,
           contact: contact,
@@ -85,20 +79,21 @@ const Register = () => {
         })
         .then(
           (response) => {
-            console.log(response);
-            if (response.status != 200) {
+            if (response.status !== 200) {
               alert("Failed to create an account");
             } else {
-              alert("Account created successfully");
+              alert(
+                "Account created successfully.Please click the link sent to your email to verify."
+              );
               history.push("/");
             }
           },
           (error) => {
-            alert("Failed to create an account");
+            alert(error);
           }
         );
     } catch {
-      alert("Failed to create an account");
+      alert(error);
     }
 
     setLoading(false);
@@ -119,6 +114,17 @@ const Register = () => {
           autoComplete="off"
           onSubmit={(e) => handleRegister(e)}
         >
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Name"
+            name="name"
+            autoComplete="name"
+            autoFocus
+          />
           <TextField
             variant="outlined"
             margin="normal"
@@ -146,10 +152,10 @@ const Register = () => {
             margin="normal"
             required
             fullWidth
-            name="confirm password"
+            name="confirm_password"
             label="Confirm Password"
             type="password"
-            id="confirm password"
+            id="confirm_password"
             autoComplete="current-password"
           />
           <TextField

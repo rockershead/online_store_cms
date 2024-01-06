@@ -1,25 +1,14 @@
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-//import firebase from '../utils/firestore';
+import axios from "axios";
+import config from "../config.json";
 import {
   Button,
   Typography,
-  styles,
   Container,
   TextField,
   makeStyles,
-  Avatar,
-  CssBaseline,
-  FormControlLabel,
-  Checkbox,
-  Link,
-  Grid,
-  Box,
 } from "@material-ui/core";
-
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import React, { useState } from "react";
-import axios from "axios";
-import config from "../config.json";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -27,10 +16,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -42,40 +27,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ForgotPassword = () => {
+const NewPassword = (props) => {
   const classes = useStyles();
   const history = useHistory();
-
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const email = new URLSearchParams(window.location.search).get("email");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const email = e.target.email.value;
-
     try {
-      await axios.post(config.API_URL + "/auth/resetPassword", {
-        email: email,
-      });
-      alert("Please refer to your email for the verification code");
-      history.push(`/NewPassword?email=${email}`);
-    } catch (err) {
-      alert(err);
-    }
+      const response = await axios.post(
+        config.API_URL + "/auth/confirmResetPassword",
+        {
+          code: code,
+          email: email,
+          newPassword: newPassword,
+        }
+      );
 
-    setLoading(false);
+      alert("Password changed sucessfully");
+      history.push("/");
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          New Password
         </Typography>
         <form
           className={classes.form}
@@ -87,18 +70,32 @@ const ForgotPassword = () => {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="code"
+            label="Verification Code"
+            name="code"
+            autoComplete="off"
             autoFocus
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="newPassword"
+            label="New Password"
+            name="newPassword"
+            type="password"
+            autoComplete="off"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
           />
 
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            disabled={loading}
             className={classes.button}
           >
             Submit
@@ -109,4 +106,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default NewPassword;
