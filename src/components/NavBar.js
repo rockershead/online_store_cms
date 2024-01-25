@@ -1,6 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import clsx from "clsx";
+import { useAuthContext } from "../hooks/useAuthContext";
 import {
   makeStyles,
   useTheme,
@@ -77,7 +78,15 @@ const useStyles = makeStyles((theme) => {
 
 const NavBar = () => {
   const classes = useStyles();
+  const history = useHistory();
   const open = true; // Set the initial value of open
+  const { user, dispatch } = useAuthContext();
+  const handleLogOut = () => {
+    localStorage.removeItem("user");
+
+    dispatch({ type: "LOGOUT" });
+    history.push("/login");
+  };
 
   return (
     <nav className="navbar">
@@ -90,9 +99,22 @@ const NavBar = () => {
         color="primary"
       >
         <div className={classes.links}>
-          <a href="/home">Home</a>
+          <a href="/">Home</a>
           <Link to="/UploadProduct">Upload New Product</Link>
-          <Link to="/ProductList">Product List</Link>
+
+          <nav>
+            {user && (
+              <div>
+                <button onClick={handleLogOut}>Log out</button>
+              </div>
+            )}
+            {!user && (
+              <div>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Register</Link>
+              </div>
+            )}
+          </nav>
         </div>
       </AppBar>
     </nav>

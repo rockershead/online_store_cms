@@ -1,20 +1,29 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import UploadProduct from "./pages/UploadProduct";
 import ProductList from "./pages/ProductList";
 import NewPassword from "./pages/NewPassword";
+import Cart from "./pages/Cart";
+import { useAuthContext } from "./hooks/useAuthContext";
 
 function App() {
+  const { user } = useAuthContext();
+  console.log(user);
   return (
     <Router>
       <div>
         <Switch>
-          <Route exact path="/">
-            <Login />
+          <Route exact path="/login">
+            {<Login />}
           </Route>
           <Route exact path="/register">
             <Register />
@@ -26,10 +35,14 @@ function App() {
             <NewPassword />
           </Route>
           <Route exact path="/UploadProduct">
-            <UploadProduct />
+            {user ? <UploadProduct /> : Redirect("/login")}
           </Route>
-          <Route exact path="/ProductList">
-            <ProductList />
+          <Route exact path="/cart">
+            {user ? <Cart /> : Redirect("/login")}
+          </Route>
+
+          <Route exact path="/">
+            {user ? <ProductList /> : Redirect("/login")}
           </Route>
         </Switch>
       </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import config from "../config.json";
 import NavBar from "../components/NavBar";
+import { useAuthContext } from "../hooks/useAuthContext";
 import {
   Button,
   TextField,
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 const UploadProduct = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const { user } = useAuthContext();
 
   const classes = useStyles();
 
@@ -68,6 +70,7 @@ const UploadProduct = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user.idToken}`,
           },
         }
       );

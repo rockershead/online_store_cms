@@ -1,4 +1,5 @@
 import { useHistory } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
 //import firebase from '../utils/firestore';
 import {
   Button,
@@ -45,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory();
-
+  const { dispatch } = useAuthContext();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -71,7 +72,10 @@ const Login = () => {
         .then(
           (response) => {
             if (response.status === 200) {
-              history.push("/ProductList");
+              localStorage.setItem("user", JSON.stringify(response.data));
+              // update the auth context
+              dispatch({ type: "LOGIN", payload: response.data });
+              history.push("/");
             } else {
               alert("You have typed an incorrect email or password");
             }

@@ -7,16 +7,22 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import config from "../config.json";
 import axios from "axios";
 import NavBar from "../components/NavBar";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useHistory } from "react-router-dom";
 
 const pageSize = 2;
 let page = 1;
 const ProductList = () => {
   const [cart, setCart] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const { user } = useAuthContext();
+  const history = useHistory();
 
   const fetchData = () => {
     let params;
@@ -29,35 +35,100 @@ const ProductList = () => {
     axios
       .get(config.API_URL + "/products", {
         params: params,
+        headers: { Authorization: `Bearer ${user.idToken}` },
       })
       .then((res) => {
         setProductList(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        alert(err);
+        //alert(err);
+        history.push("/login");
         setLoading(false);
       });
+  };
+
+  const fetchCartData = () => {
+    axios
+      .get(
+        config.API_URL + "/cart",
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.idToken}`,
+          },
+        }
+      )
+      .then(
+        (response) => {
+          extractTotal(response.data);
+        },
+        (error) => {
+          alert("Error adding into cart");
+        }
+      );
   };
 
   useEffect(() => {
     fetchData();
   }, [page, search]);
 
-  const addToCart = (product) => {
-    setCart([...cart, product]);
+  useEffect(() => {
+    fetchCartData();
+  }, []);
+  //used to calculate total no of items in cart
+  const extractTotal = (arr) => {
+    let _total = 0;
+    arr.forEach((obj) => {
+      _total = _total + obj.quantity;
+    });
+    setTotal(_total);
   };
 
-  const removeFromCart = (productId) => {
-    setCart(cart.filter((product) => product.id !== productId));
+  const addToCart = (product) => {
+    //setCart([...cart, product]);
+
+    axios
+      .post(
+        config.API_URL + "/cart",
+        {
+          productId: product._id,
+          quantity: quantity,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.idToken}`,
+          },
+        }
+      )
+      .then(
+        (response) => {
+          extractTotal(response.data);
+        },
+        (error) => {
+          alert("Error adding into cart");
+        }
+      );
   };
+
+  /*const removeFromCart = (productId) => {
+    setCart(cart.filter((product) => product.id !== productId));
+  };*/
 
   const handleCartClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    //setAnchorEl(event.currentTarget);
+    history.push("/cart");
   };
 
-  const handleCartClose = () => {
+  /*const handleCartClose = () => {
     setAnchorEl(null);
+  };*/
+  const handleQuantityChange = (event) => {
+    // Update the quantity state when the input changes
+    const value = parseInt(event.target.value, 10) || 1; // Ensure a valid number
+    setQuantity(value);
   };
 
   const handleNextPage = () => {
@@ -100,9 +171,7 @@ const ProductList = () => {
             />
           </div>
           <ShoppingCartIcon onClick={handleCartClick} />
-          <span style={{ marginLeft: "5px", cursor: "pointer" }}>
-            {cart.length}
-          </span>
+          <span style={{ marginLeft: "5px", cursor: "pointer" }}>{total}</span>
         </header>
 
         <div
@@ -136,43 +205,16 @@ const ProductList = () => {
                   {product.currency}
                   {product.price.toFixed(2)}
                 </p>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  style={{ marginBottom: "5px" }}
+                />
                 <button onClick={() => addToCart(product)}>Add to Cart</button>
               </div>
             ))}
         </div>
-
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleCartClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <div style={{ padding: "10px" }}>
-            <Typography variant="h6">Shopping Cart</Typography>
-            {cart.length === 0 ? (
-              <p>Your cart is empty</p>
-            ) : (
-              <ul>
-                {cart.map((item) => (
-                  <li key={item.id}>
-                    {item.name} - ${item.price.toFixed(2)}
-                    <button onClick={() => removeFromCart(item.id)}>
-                      Remove
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </Popover>
 
         <div
           style={{

@@ -1,6 +1,6 @@
 {
-  "name": "online_store",
-  "version": "0.1.0",
+  "name": "online_store_cms",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.4",
