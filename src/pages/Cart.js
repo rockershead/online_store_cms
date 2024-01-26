@@ -100,12 +100,35 @@ const Cart = () => {
   const handleCheckout = () => {
     console.log("Checkout button clicked");
   };
+  const handleClearCart = () => {
+    axios
+      .delete(
+        config.API_URL + "/cart",
+
+        {
+          headers: {
+            Authorization: `Bearer ${user.idToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        fetchCartData();
+      })
+      .catch((error) => {
+        console.error("Error deleting cart items:", error);
+      });
+  };
 
   return (
     <div style={{ display: "flex" }}>
       {/* Left side: List of items in the cart */}
       <div style={{ flex: 1 }}>
-        <h2>Your Shopping Cart</h2>
+        <h2>
+          Your Shopping Cart
+          <button onClick={handleClearCart} style={{ marginLeft: "10px" }}>
+            Clear Cart
+          </button>
+        </h2>
         {cartItems.map((item) => (
           <div
             key={item.productId}
