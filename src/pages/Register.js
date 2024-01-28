@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   Button,
@@ -20,7 +20,6 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import React, { useState } from "react";
 
 import axios from "axios";
-import config from "../config.json";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -45,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Register = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -70,7 +69,7 @@ const Register = () => {
 
     try {
       axios
-        .post(config.API_URL + "/auth/register", {
+        .post(process.env.REACT_APP_API_URL + "/auth/register", {
           name: name,
           email: email,
           password: password,
@@ -85,7 +84,7 @@ const Register = () => {
               alert(
                 "Account created successfully.Please click the link sent to your email to verify."
               );
-              history.push("/");
+              navigate("/");
             }
           },
           (error) => {

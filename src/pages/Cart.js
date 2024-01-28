@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import config from "../config.json";
+import { Button, IconButton } from "@material-ui/core";
 import { useAuthContext } from "../hooks/useAuthContext";
-//import {AiOutlineDelete} from 'react-icons/ai';
+import DeleteIcon from "@material-ui/icons/Delete";
+//import Chip from "@material-ui/core/Chip";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -12,7 +13,7 @@ const Cart = () => {
   useEffect(() => {
     axios
       .get(
-        config.API_URL + "/cart",
+        process.env.REACT_APP_API_URL + "/cart",
 
         {
           headers: {
@@ -34,7 +35,7 @@ const Cart = () => {
   const fetchCartData = () => {
     axios
       .get(
-        config.API_URL + "/cart",
+        process.env.REACT_APP_API_URL + "/cart",
 
         {
           headers: {
@@ -55,7 +56,7 @@ const Cart = () => {
   };
   const handleDeleteItem = (productId) => {
     axios
-      .delete(`${config.API_URL}/cart/${productId}`, {
+      .delete(`${process.env.REACT_APP_API_URL}/cart/${productId}`, {
         headers: {
           Authorization: `Bearer ${user.idToken}`,
         },
@@ -68,7 +69,7 @@ const Cart = () => {
   const handleQuantityChange = (productId, quantity) => {
     axios
       .post(
-        config.API_URL + "/cart/update_quantity",
+        process.env.REACT_APP_API_URL + "/cart/update_quantity",
         {
           productId: productId,
           quantity: quantity,
@@ -103,7 +104,7 @@ const Cart = () => {
   const handleClearCart = () => {
     axios
       .delete(
-        config.API_URL + "/cart",
+        process.env.REACT_APP_API_URL + "/cart",
 
         {
           headers: {
@@ -161,11 +162,10 @@ const Cart = () => {
                 />
               </p>
             </div>
-            <button onClick={() => handleDeleteItem(item.id)}>
-              <span role="img" aria-label="Trash Icon">
-                🗑️
-              </span>
-            </button>
+            <DeleteIcon
+              // Other props...
+              onClick={() => handleDeleteItem(item.productId)}
+            />
           </div>
         ))}
       </div>

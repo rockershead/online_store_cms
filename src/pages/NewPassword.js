@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import config from "../config.json";
+
 import {
   Button,
   Typography,
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 const NewPassword = (props) => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const email = new URLSearchParams(window.location.search).get("email");
@@ -39,7 +39,7 @@ const NewPassword = (props) => {
 
     try {
       const response = await axios.post(
-        config.API_URL + "/auth/confirmResetPassword",
+        process.env.REACT_APP_API_URL + "/auth/confirmResetPassword",
         {
           code: code,
           email: email,
@@ -48,7 +48,7 @@ const NewPassword = (props) => {
       );
 
       alert("Password changed sucessfully");
-      history.push("/");
+      navigate("/");
     } catch (error) {
       alert(error);
     }

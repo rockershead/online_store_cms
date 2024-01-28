@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 //import firebase from '../utils/firestore';
 import {
@@ -20,7 +20,6 @@ import {
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import React, { useState } from "react";
 import axios from "axios";
-import config from "../config.json";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -45,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dispatch } = useAuthContext();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -65,7 +64,7 @@ const Login = () => {
       //call the login api
 
       axios
-        .post(config.API_URL + "/auth/login", {
+        .post(process.env.REACT_APP_API_URL + "/auth/login", {
           email: email,
           password: password,
         })
@@ -75,7 +74,7 @@ const Login = () => {
               localStorage.setItem("user", JSON.stringify(response.data));
               // update the auth context
               dispatch({ type: "LOGIN", payload: response.data });
-              history.push("/");
+              navigate("/");
             } else {
               alert("You have typed an incorrect email or password");
             }

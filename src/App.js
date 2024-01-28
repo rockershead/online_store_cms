@@ -3,8 +3,9 @@ import "./App.css";
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
-  Redirect,
+  Routes,
+  Navigate,
+  BrowserRouter,
 } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,40 +14,37 @@ import UploadProduct from "./pages/UploadProduct";
 import ProductList from "./pages/ProductList";
 import NewPassword from "./pages/NewPassword";
 import Cart from "./pages/Cart";
+
 import { useAuthContext } from "./hooks/useAuthContext";
 
 function App() {
   const { user } = useAuthContext();
-  console.log(user);
-  return (
-    <Router>
-      <div>
-        <Switch>
-          <Route exact path="/login">
-            {<Login />}
-          </Route>
-          <Route exact path="/register">
-            <Register />
-          </Route>
-          <Route exact path="/ForgotPassword">
-            <ForgotPassword />
-          </Route>
-          <Route exact path="/NewPassword">
-            <NewPassword />
-          </Route>
-          <Route exact path="/UploadProduct">
-            {user ? <UploadProduct /> : Redirect("/login")}
-          </Route>
-          <Route exact path="/cart">
-            {user ? <Cart /> : Redirect("/login")}
-          </Route>
 
-          <Route exact path="/">
-            {user ? <ProductList /> : Redirect("/login")}
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+  return (
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+
+          <Route path="/register" element={<Register />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
+          <Route path="/NewPassword" element={<NewPassword />} />
+          <Route
+            path="/UploadProduct"
+            element={user ? <UploadProduct /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/cart"
+            element={user ? <Cart /> : <Navigate to="/login" />}
+          />
+
+          <Route
+            path="/"
+            element={user ? <ProductList /> : <Navigate to="/login" />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

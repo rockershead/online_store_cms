@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 //import firebase from '../utils/firestore';
 import {
   Button,
@@ -19,7 +19,6 @@ import {
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import React, { useState } from "react";
 import axios from "axios";
-import config from "../config.json";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ForgotPassword = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,11 +54,11 @@ const ForgotPassword = () => {
     const email = e.target.email.value;
 
     try {
-      await axios.post(config.API_URL + "/auth/resetPassword", {
+      await axios.post(process.env.REACT_APP_API_URL + "/auth/resetPassword", {
         email: email,
       });
       alert("Please refer to your email for the verification code");
-      history.push(`/NewPassword?email=${email}`);
+      navigate(`/NewPassword?email=${email}`);
     } catch (err) {
       alert(err);
     }

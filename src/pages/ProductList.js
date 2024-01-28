@@ -4,11 +4,11 @@ import Popover from "@material-ui/core/Popover";
 import Typography from "@material-ui/core/Typography";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import config from "../config.json";
+
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const pageSize = 2;
 let page = 1;
@@ -22,7 +22,7 @@ const ProductList = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const { user } = useAuthContext();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const fetchData = () => {
     let params;
@@ -33,7 +33,7 @@ const ProductList = () => {
     }
 
     axios
-      .get(config.API_URL + "/products", {
+      .get(process.env.REACT_APP_API_URL + "/products", {
         params: params,
         headers: { Authorization: `Bearer ${user.idToken}` },
       })
@@ -43,7 +43,7 @@ const ProductList = () => {
       })
       .catch((err) => {
         //alert(err);
-        history.push("/login");
+        navigate("/login");
         setLoading(false);
       });
   };
@@ -51,7 +51,7 @@ const ProductList = () => {
   const fetchCartData = () => {
     axios
       .get(
-        config.API_URL + "/cart",
+        process.env.REACT_APP_API_URL + "/cart",
 
         {
           headers: {
@@ -91,7 +91,7 @@ const ProductList = () => {
 
     axios
       .post(
-        config.API_URL + "/cart",
+        process.env.REACT_APP_API_URL + "/cart",
         {
           productId: product._id,
           quantity: quantity,
@@ -119,7 +119,7 @@ const ProductList = () => {
 
   const handleCartClick = (event) => {
     //setAnchorEl(event.currentTarget);
-    history.push("/cart");
+    navigate("/cart");
   };
 
   /*const handleCartClose = () => {

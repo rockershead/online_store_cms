@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import config from "../config.json";
+
 import NavBar from "../components/NavBar";
 import { useAuthContext } from "../hooks/useAuthContext";
 import {
@@ -65,7 +65,7 @@ const UploadProduct = () => {
 
     try {
       const imageUploadResponse = await axios.post(
-        config.API_URL + "/products/imageUpload",
+        process.env.REACT_APP_API_URL + "/products/imageUpload",
         formData,
         {
           headers: {
@@ -86,7 +86,10 @@ const UploadProduct = () => {
         productImageUrl: signedUrl,
       };
 
-      await axios.post(config.API_URL + "/products", productDetails);
+      await axios.post(
+        process.env.REACT_APP_API_URL + "/products",
+        productDetails
+      );
 
       alert("New Product Created");
 

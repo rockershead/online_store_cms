@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import {
@@ -78,14 +78,14 @@ const useStyles = makeStyles((theme) => {
 
 const NavBar = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const open = true; // Set the initial value of open
   const { user, dispatch } = useAuthContext();
   const handleLogOut = () => {
     localStorage.removeItem("user");
 
     dispatch({ type: "LOGOUT" });
-    history.push("/login");
+    navigate("/login");
   };
 
   return (
