@@ -88,7 +88,13 @@ const UploadProduct = () => {
 
       await axios.post(
         process.env.REACT_APP_API_URL + "/products",
-        productDetails
+        productDetails,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.idToken}`,
+          },
+        }
       );
 
       alert("New Product Created");
