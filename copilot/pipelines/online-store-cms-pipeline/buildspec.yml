@@ -1,23 +1,31 @@
 # Buildspec runs in the build stage of your pipeline.
 version: 0.2
+env:
+  parameter-store:
+    REACT_APP_API_URL: /copilot/online-store-cms/production/secrets/REACT_APP_API_URL
+    
+
 phases:
   install:
+    runtime-versions:
+      ruby: 3.1
+      nodejs: 16
     commands:
       - echo "cd into $CODEBUILD_SRC_DIR"
       - cd $CODEBUILD_SRC_DIR
       # Download the copilot linux binary.
-      - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.32.0 -O copilot-linux
+      - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.28.0
+      - mv ./copilot-linux-v1.28.0 ./copilot-linux
       - chmod +x ./copilot-linux
+      - yarn install --frozen-lockfile
   build:
     commands:
-      - echo "Run your tests"
-      # - make test
+      - yarn run build
   post_build:
     commands:
       - ls -l
       - export COLOR="false"
-      - export CI="true"
-      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/online-cms-pipeline/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
+      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/dashboard-dev/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
       - pl_envs=$(echo $pipeline | jq -r '.stages[].name')
       # Find all the local services in the workspace.
       - svc_ls_result=$(./copilot-linux svc ls --local --json)
@@ -46,6 +54,7 @@ phases:
       # Check if the `svc package` commanded exited with a non-zero status. If so, echo error msg and exit.
       - >
         for env in $pl_envs; do
+          
           tag=$(echo ${CODEBUILD_BUILD_ID##*:}-$env | sed 's/:/-/g' | rev | cut -c 1-128 | rev)
           for svc in $svcs; do
           ./copilot-linux svc package -n $svc -e $env --output-dir './infrastructure' --tag $tag --upload-assets;
