@@ -1,8 +1,6 @@
 # Buildspec runs in the build stage of your pipeline.
 version: 0.2
-env:
-  parameter-store:
-    REACT_APP_API_URL: /copilot/online-store-cms/production/secrets/REACT_APP_API_URL
+
     
 
 phases:
