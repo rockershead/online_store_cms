@@ -1,9 +1,9 @@
-# The manifest for the "online-cms-service" service.
+# The manifest for the "online-store-cms-service" service.
 # Read the full specification for the "Load Balanced Web Service" type at:
 #  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
 
 # Your service name will be used in naming your resources like log groups, ECS services, etc.
-name: online-cms-service
+name: online-store-cms-service
 type: Load Balanced Web Service
 
 # Distribute traffic to your service.
@@ -45,6 +45,7 @@ network:
 #    count: 2               # Number of tasks to run for the "test" environment.
 #    deployment:            # The deployment strategy for the "test" environment.
 #       rolling: 'recreate' # Stops existing tasks before new ones are started for faster deployments.
+
 environments:
     production:
       count:
@@ -53,4 +54,3 @@ environments:
         memory_percentage: 80
       secrets: 
         REACT_APP_API_URL: /copilot/online-store-cms/production/secrets/REACT_APP_API_URL
-        
