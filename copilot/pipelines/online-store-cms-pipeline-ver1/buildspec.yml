@@ -1,7 +1,10 @@
 # Buildspec runs in the build stage of your pipeline.
 version: 0.2
 
-    
+env:
+  parameter-store:
+    REACT_APP_API_URL: /copilot/online-store-cms/production/secrets/REACT_APP_API_URL
+    random: /copilot/online-store-cms/production/secrets/random
 
 phases:
   install:
@@ -23,7 +26,7 @@ phases:
     commands:
       - ls -l
       - export COLOR="false"
-      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/online-store-cms-pipeline/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
+      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/online-store-cms-pipeline-ver1/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
       - pl_envs=$(echo $pipeline | jq -r '.stages[].name')
       # Find all the local services in the workspace.
       - svc_ls_result=$(./copilot-linux svc ls --local --json)
