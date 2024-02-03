@@ -4,7 +4,6 @@ import clsx from "clsx";
 import { useAuthContext } from "../hooks/useAuthContext";
 import {
   makeStyles,
-  useTheme,
   Drawer,
   Typography,
   List,
@@ -15,109 +14,110 @@ import {
   Toolbar,
   IconButton,
 } from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+import HomeIcon from "@material-ui/icons/Home";
+import AddBoxIcon from "@material-ui/icons/AddBox";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme) => {
-  return {
-    page: {
-      //background: '#f9f9f9',
-      width: "100%",
-    },
-    root: {
-      display: "flex",
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    active: {
-      background: "#f4f4f4",
-    },
-    toolbar: theme.mixins.toolbar,
-    appBar: {
-      display: "flex",
-      backgroundColor: "pink",
-      transition: theme.transitions.create(["margin", "width"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-      transition: theme.transitions.create(["margin", "width"], {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    hide: {
-      display: "none",
-    },
-    links: {
-      display: "flex",
-      justifyContent: "space-around",
-      width: "100%",
-    },
-    drawerHeader: {
-      display: "flex",
-      alignItems: "center",
-      padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
-      ...theme.mixins.toolbar,
-      justifyContent: "flex-end",
-    },
-  };
-});
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "wrap",
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: "light-blue",
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  links: {
+    display: "flex",
+    alignItems: "center",
+  },
+  linkText: {
+    marginRight: theme.spacing(2),
+    color: "white",
+  },
+}));
 
 const NavBar = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const open = true; // Set the initial value of open
   const { user, dispatch } = useAuthContext();
+
   const handleLogOut = () => {
     localStorage.removeItem("user");
-
     dispatch({ type: "LOGOUT" });
     navigate("/login");
   };
 
   return (
-    <nav className="navbar">
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-        elevation={0}
-        color="primary"
-      >
-        <div className={classes.links}>
-          <a href="/">Home</a>
-          <Link to="/UploadProduct">Upload New Product</Link>
-
-          <nav>
-            {user && (
-              <div>
-                <button onClick={handleLogOut}>Log out</button>
-              </div>
+    <div className={classes.root}>
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            My App
+          </Typography>
+          <div className={classes.links}>
+            <Link to="/" className={classes.link}>
+              <HomeIcon />
+              <Typography variant="body1" className={classes.linkText}>
+                Home
+              </Typography>
+            </Link>
+            {user.role === "SUPERADMIN" && (
+              <Link to="/UploadProduct" className={classes.link}>
+                <AddBoxIcon />
+                <Typography variant="body1" className={classes.linkText}>
+                  Upload Product
+                </Typography>
+              </Link>
             )}
-            {!user && (
-              <div>
-                <Link to="/login">Login</Link>
-                <Link to="/register">Register</Link>
-              </div>
+            {user ? (
+              <IconButton color="inherit" onClick={handleLogOut}>
+                <ExitToAppIcon />
+                <Typography variant="body1" className={classes.linkText}>
+                  Log out
+                </Typography>
+              </IconButton>
+            ) : (
+              <>
+                <Link to="/login" className={classes.link}>
+                  <Typography variant="body1" className={classes.linkText}>
+                    Login
+                  </Typography>
+                </Link>
+                <Link to="/register" className={classes.link}>
+                  <Typography variant="body1" className={classes.linkText}>
+                    Register
+                  </Typography>
+                </Link>
+              </>
             )}
-          </nav>
-        </div>
+          </div>
+        </Toolbar>
       </AppBar>
-    </nav>
+    </div>
   );
 };
 

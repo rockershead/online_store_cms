@@ -18,7 +18,7 @@ export const AuthContextProvider = ({ children }) => {
     user: null,
   });
   // Loading state
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -26,10 +26,10 @@ export const AuthContextProvider = ({ children }) => {
     if (user) {
       dispatch({ type: "LOGIN", payload: user });
     }
-    setIsLoading(true);
+    setIsLoading(false);
   }, []);
 
-  console.log("AuthContext state:", state);
+  //console.log("AuthContext state:", state);
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch, isLoading }}>

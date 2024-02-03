@@ -18,7 +18,12 @@ import Cart from "./pages/Cart";
 import { useAuthContext } from "./hooks/useAuthContext";
 
 function App() {
-  const { user } = useAuthContext();
+  const { user, isLoading } = useAuthContext();
+
+  if (isLoading) {
+    // Render a loading indicator while isLoading is true
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
