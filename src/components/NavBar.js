@@ -56,7 +56,7 @@ const NavBar = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { user, dispatch } = useAuthContext();
-
+  console.log(user);
   const handleLogOut = () => {
     localStorage.removeItem("user");
     dispatch({ type: "LOGOUT" });
